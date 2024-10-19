@@ -32,9 +32,17 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Set up GCloud authentication
+          command: |
+            echo $IND_KC_GCLOUD_KEY | base64 --decode > ${HOME}/gcloud-service-key.json
+            gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
+            gcloud config set project kc-qa-project
+
+      - run:
           name: Install Firebase CLI
           command: |
             curl -sL https://firebase.tools | bash
+
       - run:
           name: Deploy to Firebase
           command: |
