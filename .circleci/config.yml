@@ -1,0 +1,51 @@
+version: 2.1
+
+jobs:
+  install:
+    docker:
+      - image: circleci/python:3.9
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            python -m venv venv
+            . venv/bin/activate
+            pip install -r requirements.txt
+
+  test:
+    docker:
+      - image: circleci/python:3.9
+    steps:
+      - checkout
+      - run:
+          name: Run Tests
+          command: |
+            python -m venv venv
+            . venv/bin/activate
+            pip install -r requirements.txt
+            python -m unittest discover tests
+
+  deploy:
+    docker:
+      - image: circleci/python:3.9
+    steps:
+      - checkout
+      - run:
+          name: Install Firebase CLI
+          command: |
+            curl -sL https://firebase.tools | bash
+      - run:
+          name: Deploy to Firebase
+          command: |
+            firebase deploy --token $FIREBASE_TOKEN --only hosting
+
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - install
+      - test
+      - deploy:
+          requires:
+            - test
