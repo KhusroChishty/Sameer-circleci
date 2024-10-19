@@ -7,17 +7,39 @@ jobs:
     steps:
       - checkout
       - run: python main.py
+
   test:
     docker:
       - image: cimg/python:3.11
     steps:
       - checkout
       - run: python tests.py
+
   deploy:
     docker:
       - image: cimg/python:3.11
     steps:
-      - run: echo "Deploying to production server"
+      - run: echo "Deploying to Firebase"
+
+      # Set up GCloud authentication using your service account
+      - run:
+          name: Set up GCloud authentication
+          command: |
+            echo $IND_KC_GCLOUD_KEY | base64 --decode > ${HOME}/gcloud-service-key.json
+            gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
+            gcloud config set project kc-qa-project
+
+      # Install Firebase CLI (if not installed already)
+      - run:
+          name: Install Firebase CLI
+          command: |
+            curl -sL https://firebase.tools | bash
+
+      # Deploy to Firebase Hosting or any other Firebase service
+      - run:
+          name: Firebase Deploy
+          command: |
+            firebase deploy --token "$(gcloud auth print-access-token)"
 
 workflows:
   build_and_test_deploy:
