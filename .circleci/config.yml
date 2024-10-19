@@ -63,7 +63,7 @@ jobs:
       - run:
           name: Deploy to Firebase
           command: |
-            firebase deploy --token $FIREBASE_TOKEN --only hosting
+            firebase deploy --token $FIREBASE_TOKEN --project kc-qa-project --only hosting
 
 workflows:
   version: 2
