@@ -7,11 +7,12 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Install dependencies
+          name: Create Virtual Environment and Install Dependencies
           command: |
             python -m venv venv
             . venv/bin/activate
-            pip install -r requirements.txt
+            pip install --upgrade pip  # Ensure pip is up to date
+            pip install -r requirements.txt  # Install requirements
 
   test:
     docker:
@@ -23,8 +24,9 @@ jobs:
           command: |
             python -m venv venv
             . venv/bin/activate
-            pip install -r requirements.txt
-            python -m unittest discover tests
+            pip install --upgrade pip  # Ensure pip is up to date
+            pip install -r requirements.txt  # Install requirements
+            python -m unittest discover tests  # Discover and run tests
 
   deploy:
     docker:
@@ -53,7 +55,9 @@ workflows:
   build_and_deploy:
     jobs:
       - install
-      - test
+      - test:
+          requires:
+            - install  # Ensure install job is complete before testing
       - deploy:
           requires:
-            - test
+            - test  # Ensure tests pass before deployment
