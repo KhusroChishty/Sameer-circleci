@@ -43,6 +43,10 @@ jobs:
       - run:
           name: Set up GCloud authentication
           command: |
+          if [ -z "$IND_KC_GCLOUD_KEY" ]; then
+            echo "Error: IND_KC_GCLOUD_KEY is not set."
+            exit 1
+          command: |
             echo $IND_KC_GCLOUD_KEY | base64 --decode > ${HOME}/gcloud-service-key.json
             gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
             gcloud config set project kc-qa-project
