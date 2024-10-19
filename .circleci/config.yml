@@ -56,6 +56,11 @@ jobs:
             curl -sL https://firebase.tools | bash
 
       - run:
+          name: Debug Firebase Token
+          command: |
+            echo "FIREBASE_TOKEN is set."
+
+      - run:
           name: Deploy to Firebase
           command: |
             firebase deploy --token $FIREBASE_TOKEN --only hosting
