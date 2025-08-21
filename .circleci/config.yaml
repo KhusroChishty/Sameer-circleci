@@ -15,7 +15,7 @@ references:
     resource_class: xlarge
     parallelism: 1
     environment:
-      MAVEN_OPTS: "-Xms10g -Xmx10g"
+      MAVEN_OPTS: "-Xms2g -Xmx4g"
 
 jobs:
   build:
@@ -25,12 +25,11 @@ jobs:
       - run:
           name: Build Application
           command: mvn clean install
-          
+
 workflows:
-  version: 2
   build_workflow:
     jobs:
       - build:
           filters:
             branches:
-              only: main  
+              only: main
