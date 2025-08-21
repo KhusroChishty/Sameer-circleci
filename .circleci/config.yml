@@ -1,0 +1,35 @@
+version: 2.1
+
+orbs:
+  aws-cli: circleci/aws-cli@3.1.5
+
+references:
+  container_config: &container_config
+    docker:
+      - image: cimg/openjdk:17.0.10-node
+        command: [ "/bin/bash" ]
+      - image: rabbitmq:3.9.13
+      - image: clamav/clamav:1.0
+      - image: thecodingmachine/gotenberg:7.10.2
+      - image: mongo:5.0
+    resource_class: xlarge
+    parallelism: 1
+    environment:
+      MAVEN_OPTS: "-Xms2g -Xmx4g"
+
+jobs:
+  build:
+    <<: *container_config
+    steps:
+      - checkout
+      - run:
+          name: Build Application
+          command: mvn clean install
+
+workflows:
+  build_workflow:
+    jobs:
+      - build:
+          filters:
+            branches:
+              only: main
